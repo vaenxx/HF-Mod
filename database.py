@@ -4,7 +4,8 @@ from pathlib import Path
 from typing import Any
 import aiofiles
 
-DB_PATH = Path(__file__).resolve().parent / "database.json"
+_DATA_DIR = os.getenv("DATA_DIR", "").strip()
+DB_PATH = (Path(_DATA_DIR) / "database.json") if _DATA_DIR else (Path(__file__).resolve().parent / "database.json")
 _LOCK = asyncio.Lock()
 ADMIN_ROLES = ["Высшая Администрация", "Куратор", "Гл.Модератор", "Спектатор"]
 ALL_ROLES = ["Стажер", "Модератор", "Гл.Модератор", "Куратор", "Высшая Администрация", "Спектатор"]
