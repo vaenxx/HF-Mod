@@ -17,7 +17,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 API_HOST = os.getenv("HF_API_HOST", "0.0.0.0")
-API_PORT = int(os.getenv("PORT", os.getenv("HF_API_PORT", "8080")))
+API_PORT = int(os.getenv("HF_API_PORT", "8080"))
 _ACTIVATE_ATTEMPTS: dict[str, float] = {}
 
 logging.basicConfig(level=logging.INFO)
@@ -113,7 +113,12 @@ async def start_api() -> web.AppRunner:
     app.router.add_get("/api/v1/login-status/{request_id}", login_status_api)
     runner = web.AppRunner(app)
     await runner.setup()
-    await web.TCPSite(runner, API_HOST, API_PORT).start()
+    try:
+        await web.TCPSite(runner, API_HOST, API_PORT).start()
+    except OSError as exc:
+        await runner.cleanup()
+        logging.error("Не удалось открыть API-порт %s: %s", API_PORT, exc)
+        return None
     logging.info("HF API listening on %s:%s", API_HOST, API_PORT)
     return runner
 
@@ -147,7 +152,8 @@ async def main():
     try:
         await dp.start_polling(bot)
     finally:
-        await api_runner.cleanup()
+        if api_runner is not None:
+            await api_runner.cleanup()
         await bot.session.close()
 
 if __name__ == "__main__":
