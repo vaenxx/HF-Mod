@@ -15,7 +15,7 @@ from handlers import auth, profile, mod, admin
 
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("8916022140:AAHFzznSouie-Al288hg0BL6uHBnGYZprMk")
 API_HOST = os.getenv("HF_API_HOST", "0.0.0.0")
 API_PORT = int(os.getenv("HF_API_PORT", "8080"))
 _ACTIVATE_ATTEMPTS: dict[str, float] = {}
